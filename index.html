@@ -900,12 +900,64 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Current Mood</label>
-                        <div class="quick-select" id="moodSelect">
-                            <button class="quick-btn" data-value="Great">😊 Great</button>
-                            <button class="quick-btn" data-value="Good">🙂 Good</button>
-                            <button class="quick-btn" data-value="Okay">😐 Okay</button>
-                            <button class="quick-btn" data-value="Not Great">😔 Not Great</button>
+                        <label class="form-label">Moods Throughout the Day</label>
+                        <div style="display: flex; flex-direction: column; gap: 12px;" id="moodCheckboxes">
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Happy" style="display: none;">
+                                <div class="checklist-label">😊 Happy</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Calm" style="display: none;">
+                                <div class="checklist-label">😌 Calm</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Anxious" style="display: none;">
+                                <div class="checklist-label">😰 Anxious</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Sad" style="display: none;">
+                                <div class="checklist-label">😔 Sad</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Stressed" style="display: none;">
+                                <div class="checklist-label">😣 Stressed</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Energetic" style="display: none;">
+                                <div class="checklist-label">⚡ Energetic</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Tired" style="display: none;">
+                                <div class="checklist-label">😴 Tired</div>
+                            </label>
+                            <label class="checklist-item" style="cursor: pointer;">
+                                <div class="checkbox">
+                                    <span class="checkbox-icon">✓</span>
+                                </div>
+                                <input type="checkbox" value="Irritable" style="display: none;">
+                                <div class="checklist-label">😠 Irritable</div>
+                            </label>
                         </div>
                     </div>
 
@@ -1220,13 +1272,13 @@
                     sleepValue.textContent = e.target.value;
                 });
 
-                // Mood selection
-                document.getElementById('moodSelect').addEventListener('click', (e) => {
-                    if (e.target.classList.contains('quick-btn')) {
-                        document.querySelectorAll('#moodSelect .quick-btn').forEach(btn => {
-                            btn.classList.remove('selected');
-                        });
-                        e.target.classList.add('selected');
+                // Mood checkboxes
+                document.getElementById('moodCheckboxes').addEventListener('click', (e) => {
+                    const label = e.target.closest('label');
+                    if (label && label.classList.contains('checklist-item')) {
+                        const checkbox = label.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        label.classList.toggle('checked');
                     }
                 });
 
@@ -1238,13 +1290,14 @@
 
             saveDailyLog() {
                 const today = new Date().toLocaleDateString();
-                const selectedMood = document.querySelector('#moodSelect .quick-btn.selected');
+                const selectedMoods = Array.from(document.querySelectorAll('#moodCheckboxes input[type="checkbox"]:checked'))
+                    .map(cb => cb.value);
                 
                 const log = {
                     date: today,
                     sleepQuality: document.getElementById('sleepQuality').value,
                     sleepHours: document.getElementById('sleepHours').value,
-                    mood: selectedMood ? selectedMood.dataset.value : '',
+                    moods: selectedMoods,
                     medications: document.getElementById('medications').value,
                     foods: document.getElementById('foods').value,
                     activities: document.getElementById('activities').value
@@ -1262,21 +1315,44 @@
                 const checklist = document.getElementById('todayChecklist');
                 
                 const items = [
-                    { label: 'Log sleep', completed: log.sleepHours && log.sleepQuality },
-                    { label: 'Record mood', completed: log.mood },
-                    { label: 'Track medications', completed: log.medications },
-                    { label: 'Note foods eaten', completed: log.foods },
-                    { label: 'Log activities', completed: log.activities }
+                    { label: 'Log sleep', completed: log.sleepHours && log.sleepQuality, section: 'sleepHours' },
+                    { label: 'Record mood', completed: log.moods && log.moods.length > 0, section: 'moodCheckboxes' },
+                    { label: 'Track medications', completed: log.medications, section: 'medications' },
+                    { label: 'Note foods eaten', completed: log.foods, section: 'foods' },
+                    { label: 'Log activities', completed: log.activities, section: 'activities' }
                 ];
 
                 checklist.innerHTML = items.map(item => `
-                    <div class="checklist-item ${item.completed ? 'checked' : ''}">
+                    <div class="checklist-item ${item.completed ? 'checked' : ''}" style="cursor: pointer;" onclick="tracker.goToDailySection('${item.section}')">
                         <div class="checkbox">
                             <span class="checkbox-icon">✓</span>
                         </div>
                         <div class="checklist-label">${item.label}</div>
                     </div>
                 `).join('');
+            }
+
+            goToDailySection(sectionId) {
+                // Switch to daily view
+                this.switchView('dailyView');
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.querySelector('.nav-item[data-view="dailyView"]').classList.add('active');
+                
+                // Scroll to the specific section
+                setTimeout(() => {
+                    const element = document.getElementById(sectionId);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Add a highlight effect
+                        element.style.transition = 'all 0.3s';
+                        element.style.transform = 'scale(1.02)';
+                        element.style.boxShadow = '0 0 0 4px rgba(192, 132, 252, 0.3)';
+                        setTimeout(() => {
+                            element.style.transform = '';
+                            element.style.boxShadow = '';
+                        }, 1000);
+                    }
+                }, 100);
             }
 
             updateHomeView() {
