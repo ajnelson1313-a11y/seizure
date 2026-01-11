@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SeizureTrack - Condition Monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #C084FC;
+            --primary-light: #E9D5FF;
+            --primary-dark: #A855F7;
+            --secondary: #F472B6;
+            --secondary-light: #FBCFE8;
+            --accent: #EC4899;
+            --success: #86EFAC;
+            --warning: #FCD34D;
+            --bg: linear-gradient(135deg, #FDF4FF 0%, #FAF5FF 50%, #FEF3F9 100%);
+            --bg-card: #FFFFFF;
+            --text: #4A1D5F;
+            --text-light: #9333EA;
+            --border: #F3E8FF;
+            --emergency: #EC4899;
+            --emergency-glow: rgba(236, 72, 153, 0.3);
+            --gradient-primary: linear-gradient(135deg, #C084FC 0%, #F472B6 100%);
+            --gradient-secondary: linear-gradient(135deg, #F472B6 0%, #FCA5A5 100%);
+            --gradient-soft: linear-gradient(135deg, #FAE8FF 0%, #FCE7F3 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        body::before {
+            content: '💜';
+            position: fixed;
+            top: 15%;
+            right: 5%;
+            font-size: 60px;
+            opacity: 0.08;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '💖';
+            position: fixed;
+            bottom: 20%;
+            left: 8%;
+            font-size: 50px;
+            opacity: 0.08;
+            z-index: 0;
+            animation: float 7s ease-in-out infinite 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .app-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 24px 24px;
+            box-shadow: 0 8px 32px rgba(192, 132, 252, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 40px;
+            opacity: 0.3;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(1); }
+            50% { opacity: 0.6; transform: rotate(10deg) scale(1.1); }
+        }
+
+        .app-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-subtitle {
+            font-size: 15px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Emergency Button */
+        .emergency-section {
+            padding: 32px 24px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .emergency-btn {
+            width: 100%;
+            min-height: 150px;
+            background: var(--gradient-secondary);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 40px var(--emergency-glow), 
+                        0 0 0 0 var(--emergency-glow),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .emergency-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 6px 25px var(--emergency-glow);
+        }
+
+        .emergency-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .emergency-btn:active::before {
+            width: 350px;
+            height: 350px;
+        }
+
+        .emergency-icon {
+            font-size: 52px;
+            display: block;
+            margin-bottom: 10px;
+            animation: pulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.08); }
+        }
+
+        /* View Container */
+        .view-container {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Cards */
+        .content-section {
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(192, 132, 252, 0.08);
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .card-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(192, 132, 252, 0.3));
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: rgba(253, 244, 255, 0.5);
+            color: var(--text);
+            transition: all 0.3s;
+            min-height: 60px;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.1),
+                        0 4px 20px rgba(192, 132, 252, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 20px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Nunito', sans-serif;
+            min-height: 64px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 6px 20px rgba(192, 132, 252, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 12px rgba(192, 132, 252, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-soft);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #86EFAC 0%, #4ADE80 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(134, 239, 172, 0.35);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Quick Log Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.4) 0%, rgba(244, 114, 182, 0.4) 100%);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 36px 28px;
+            margin: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(192, 132, 252, 0.4);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(244, 114, 182, 0.4);
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0) rotate(-180deg); }
+            70% { transform: scale(1.1) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .success-text {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .success-time {
+            font-size: 36px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0;
+        }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            background: var(--gradient-soft);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .checklist-item:active {
+            transform: scale(0.98);
+        }
+
+        .checklist-item.checked {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.15) 0%, rgba(251, 207, 232, 0.15) 100%);
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.2);
+        }
+
+        .checkbox {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .checklist-item.checked .checkbox {
+            background: var(--gradient-secondary);
+            border-color: var(--secondary);
+            transform: rotate(5deg);
+        }
+
+        .checkbox-icon {
+            color: white;
+            font-size: 22px;
+            display: none;
+        }
+
+        .checklist-item.checked .checkbox-icon {
+            display: block;
+            animation: checkPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes checkPop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .checklist-label {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* History List */
+        .history-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(192, 132, 252, 0.08);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .history-date {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .history-time {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .history-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--gradient-secondary);
+            color: white;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3);
+        }
+
+        .history-details {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-detail {
+            display: flex;
+            font-size: 15px;
+        }
+
+        .history-detail-label {
+            font-weight: 600;
+            color: var(--text-light);
+            min-width: 100px;
+        }
+
+        .history-detail-value {
+            color: var(--text);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 2px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -6px 30px rgba(192, 132, 252, 0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-family: 'Nunito', sans-serif;
+            border-radius: 12px;
+        }
+
+        .nav-item.active {
+            background: var(--gradient-soft);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 26px;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(192, 132, 252, 0.2));
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 28px 20px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(192, 132, 252, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '✨';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 20px;
+            opacity: 0.4;
+        }
+
+        .stat-value {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        /* Emergency Contact */
+        .emergency-contact {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.08) 0%, rgba(251, 207, 232, 0.08) 100%);
+            border: 2px solid rgba(244, 114, 182, 0.3);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(244, 114, 182, 0.1);
+        }
+
+        .emergency-contact-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .emergency-contact-icon {
+            font-size: 32px;
+        }
+
+        .emergency-contact-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+
+        .contact-icon {
+            font-size: 20px;
+            color: var(--text-light);
+        }
+
+        .call-btn {
+            background: var(--gradient-secondary);
+            color: white;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            box-shadow: 0 6px 20px rgba(244, 114, 182, 0.35);
+        }
+
+        /* Slider Input */
+        .slider-container {
+            padding: 24px 0;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            font-family: 'Quicksand', sans-serif;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 14px;
+            border-radius: 10px;
+            background: var(--gradient-soft);
+            outline: none;
+            -webkit-appearance: none;
+            border: 2px solid var(--border);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(192, 132, 252, 0.4);
+            border: 3px solid white;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 4px 15px rgba(192, 132, 252, 0.4);
+        }
+
+        /* Quick Select Buttons */
+        .quick-select {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .quick-btn {
+            padding: 18px;
+            background: var(--gradient-soft);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+            min-height: 64px;
+        }
+
+        .quick-btn.selected {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 6px 20px rgba(192, 132, 252, 0.35);
+            transform: scale(1.02);
+        }
+
+        .quick-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Export Button */
+        .export-section {
+            margin-top: 32px;
+        }
+
+        .export-info {
+            background: var(--gradient-soft);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: var(--text);
+            border: 2px solid var(--border);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="app-title">✨ My Wellness Tracker</div>
+            <div class="app-subtitle">Taking care of you, every day 💜</div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid" style="padding: 24px; padding-bottom: 0;">
+            <div class="stat-card">
+                <div class="stat-value" id="seizureCount">0</div>
+                <div class="stat-label">Seizures This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="daysSinceLast">—</div>
+                <div class="stat-label">Days Seizure-Free</div>
+            </div>
+        </div>
+
+        <!-- Emergency Log Button -->
+        <div class="emergency-section">
+            <button class="emergency-btn" id="emergencyBtn">
+                <span class="emergency-icon">🚨</span>
+                LOG SEIZURE NOW
+            </button>
+        </div>
+
+        <!-- Home View -->
+        <div id="homeView" class="view-container active">
+            <div class="content-section">
+                <!-- Today's Checklist -->
+                <div class="card">
+                    <div class="card-title">
+                        <span class="card-icon">✓</span>
+                        Today's Checklist
+                    </div>
+                    <div id="todayChecklist"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Log View -->
+        <div id="dailyView" class="view-container">
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-title">
+                        <span class="card-icon">📝</span>
+                        Daily Tracking
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Sleep Quality (1-10)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="sleepValue">5</div>
+                            <input type="range" id="sleepQuality" min="1" max="10" value="5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Hours of Sleep</label>
+                        <input type="number" id="sleepHours" class="form-input" placeholder="e.g., 7.5" step="0.5" min="0" max="24">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Current Mood</label>
+                        <div class="quick-select" id="moodSelect">
+                            <button class="quick-btn" data-value="Great">😊 Great</button>
+                            <button class="quick-btn" data-value="Good">🙂 Good</button>
+                            <button class="quick-btn" data-value="Okay">😐 Okay</button>
+                            <button class="quick-btn" data-value="Not Great">😔 Not Great</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Medications Taken Today</label>
+                        <textarea id="medications" class="form-textarea" placeholder="List medications and times..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Foods Eaten Today</label>
+                        <textarea id="foods" class="form-textarea" placeholder="What did you eat?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Activities Today</label>
+                        <textarea id="activities" class="form-textarea" placeholder="Exercise, stress, screen time, etc."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary btn-full" id="saveDailyLog">
+                        💾 Save Daily Log
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History View -->
+        <div id="historyView" class="view-container">
+            <div class="content-section">
+                <div class="card">
+                    <div class="card-title">
+                        <span class="card-icon">📊</span>
+                        Seizure History
+                    </div>
+                    <div id="historyList"></div>
+                </div>
+
+                <div class="export-section">
+                    <div class="export-info">
+                        Export your data to share with your neurologist or for your records.
+                    </div>
+                    <button class="btn btn-secondary btn-full" id="exportBtn">
+                        📄 Export to CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settingsView" class="view-container">
+            <div class="content-section">
+                <!-- Emergency Contact -->
+                <div class="emergency-contact">
+                    <div class="emergency-contact-header">
+                        <span class="emergency-contact-icon">🚑</span>
+                        <span class="emergency-contact-title">Emergency Information</span>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon">👤</span>
+                            <input type="text" id="emergencyName" class="form-input" placeholder="Emergency contact name" style="flex: 1;">
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <input type="tel" id="emergencyPhone" class="form-input" placeholder="Phone number" style="flex: 1;">
+                        </div>
+                    </div>
+                    <a href="#" class="btn call-btn btn-full" id="callEmergencyBtn" style="display: none;">
+                        📞 Call Emergency Contact
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <span class="card-icon">💊</span>
+                        Medication Reminders
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Regular Medications</label>
+                        <textarea id="regularMeds" class="form-textarea" placeholder="List your regular medications and schedules..."></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-full" id="saveMeds">
+                        💾 Save Medications
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <span class="card-icon">⚙️</span>
+                        Data Management
+                    </div>
+                    <button class="btn btn-secondary btn-full" id="clearDataBtn" style="margin-bottom: 12px;">
+                        🗑️ Clear All Data
+                    </button>
+                    <div style="font-size: 14px; color: var(--text-light); text-align: center;">
+                        All data is stored locally on your device
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="homeView">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-view="dailyView">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Daily</span>
+            </button>
+            <button class="nav-item" data-view="historyView">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">History</span>
+            </button>
+            <button class="nav-item" data-view="settingsView">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Quick Log Modal -->
+    <div class="modal-overlay" id="quickLogModal">
+        <div class="modal-content" id="modalContent">
+            <!-- Content injected by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        class SeizureTracker {
+            constructor() {
+                this.data = this.loadData();
+                this.init();
+            }
+
+            loadData() {
+                const saved = localStorage.getItem('seizureData');
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+                return {
+                    seizures: [],
+                    dailyLogs: {},
+                    emergencyContact: { name: '', phone: '' },
+                    medications: ''
+                };
+            }
+
+            saveData() {
+                localStorage.setItem('seizureData', JSON.stringify(this.data));
+            }
+
+            init() {
+                this.setupNavigation();
+                this.setupEmergencyButton();
+                this.setupDailyLog();
+                this.setupSettings();
+                this.updateHomeView();
+                this.updateHistoryView();
+                this.loadSettings();
+                this.loadTodayChecklist();
+            }
+
+            setupNavigation() {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const viewId = item.dataset.view;
+                        this.switchView(viewId);
+                        navItems.forEach(n => n.classList.remove('active'));
+                        item.classList.add('active');
+                    });
+                });
+            }
+
+            switchView(viewId) {
+                document.querySelectorAll('.view-container').forEach(view => {
+                    view.classList.remove('active');
+                });
+                document.getElementById(viewId).classList.add('active');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                if (viewId === 'historyView') {
+                    this.updateHistoryView();
+                } else if (viewId === 'homeView') {
+                    this.updateHomeView();
+                    this.loadTodayChecklist();
+                }
+            }
+
+            setupEmergencyButton() {
+                document.getElementById('emergencyBtn').addEventListener('click', () => {
+                    this.showQuickLog();
+                });
+            }
+
+            showQuickLog() {
+                const now = new Date();
+                const modal = document.getElementById('quickLogModal');
+                const content = document.getElementById('modalContent');
+                
+                content.innerHTML = `
+                    <div class="success-message">
+                        <div class="success-icon">✓</div>
+                        <div class="success-text">Seizure Logged</div>
+                        <div class="success-time">${this.formatTime(now)}</div>
+                        <div style="color: var(--text-light); margin-bottom: 24px;">
+                            ${this.formatDate(now)}
+                        </div>
+                        <div style="font-size: 16px; margin-bottom: 24px; color: var(--text-light);">
+                            Add details now or later?
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="tracker.addSeizureDetails('${now.toISOString()}')">
+                                Add Details
+                            </button>
+                            <button class="btn btn-secondary" onclick="tracker.saveQuickSeizure('${now.toISOString()}')">
+                                Save & Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+            }
+
+            saveQuickSeizure(timestamp) {
+                this.data.seizures.push({
+                    timestamp: timestamp,
+                    date: new Date(timestamp).toLocaleDateString(),
+                    time: new Date(timestamp).toLocaleTimeString(),
+                    hasDetails: false
+                });
+                this.saveData();
+                this.closeModal();
+                this.updateHomeView();
+            }
+
+            addSeizureDetails(timestamp) {
+                const content = document.getElementById('modalContent');
+                content.innerHTML = `
+                    <div class="modal-title">Seizure Details</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Type of Seizure</label>
+                        <select id="seizureType" class="form-select">
+                            <option value="">Select type...</option>
+                            <option value="Focal Aware">Focal Aware</option>
+                            <option value="Focal Impaired">Focal Impaired Awareness</option>
+                            <option value="Generalized Tonic-Clonic">Generalized Tonic-Clonic</option>
+                            <option value="Absence">Absence</option>
+                            <option value="Myoclonic">Myoclonic</option>
+                            <option value="Atonic">Atonic</option>
+                            <option value="Unknown">Unknown/Unsure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes)</label>
+                        <input type="number" id="seizureDuration" class="form-input" placeholder="e.g., 2" step="0.5" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Aura/Warning Symptoms</label>
+                        <textarea id="auraSymptoms" class="form-textarea" placeholder="Did you feel anything before the seizure?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea id="seizureNotes" class="form-textarea" placeholder="Triggers, recovery time, etc."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-full" onclick="tracker.saveDetailedSeizure('${timestamp}')">
+                            💾 Save All Details
+                        </button>
+                    </div>
+                `;
+            }
+
+            saveDetailedSeizure(timestamp) {
+                const seizure = {
+                    timestamp: timestamp,
+                    date: new Date(timestamp).toLocaleDateString(),
+                    time: new Date(timestamp).toLocaleTimeString(),
+                    type: document.getElementById('seizureType').value,
+                    duration: document.getElementById('seizureDuration').value,
+                    aura: document.getElementById('auraSymptoms').value,
+                    notes: document.getElementById('seizureNotes').value,
+                    hasDetails: true
+                };
+
+                this.data.seizures.push(seizure);
+                this.saveData();
+                this.closeModal();
+                this.updateHomeView();
+                this.showSuccessToast('Seizure details saved successfully');
+            }
+
+            closeModal() {
+                document.getElementById('quickLogModal').classList.remove('active');
+            }
+
+            setupDailyLog() {
+                // Sleep quality slider
+                const sleepSlider = document.getElementById('sleepQuality');
+                const sleepValue = document.getElementById('sleepValue');
+                sleepSlider.addEventListener('input', (e) => {
+                    sleepValue.textContent = e.target.value;
+                });
+
+                // Mood selection
+                document.getElementById('moodSelect').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('quick-btn')) {
+                        document.querySelectorAll('#moodSelect .quick-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        e.target.classList.add('selected');
+                    }
+                });
+
+                // Save daily log
+                document.getElementById('saveDailyLog').addEventListener('click', () => {
+                    this.saveDailyLog();
+                });
+            }
+
+            saveDailyLog() {
+                const today = new Date().toLocaleDateString();
+                const selectedMood = document.querySelector('#moodSelect .quick-btn.selected');
+                
+                const log = {
+                    date: today,
+                    sleepQuality: document.getElementById('sleepQuality').value,
+                    sleepHours: document.getElementById('sleepHours').value,
+                    mood: selectedMood ? selectedMood.dataset.value : '',
+                    medications: document.getElementById('medications').value,
+                    foods: document.getElementById('foods').value,
+                    activities: document.getElementById('activities').value
+                };
+
+                this.data.dailyLogs[today] = log;
+                this.saveData();
+                this.showSuccessToast('Daily log saved!');
+                this.loadTodayChecklist();
+            }
+
+            loadTodayChecklist() {
+                const today = new Date().toLocaleDateString();
+                const log = this.data.dailyLogs[today] || {};
+                const checklist = document.getElementById('todayChecklist');
+                
+                const items = [
+                    { label: 'Log sleep', completed: log.sleepHours && log.sleepQuality },
+                    { label: 'Record mood', completed: log.mood },
+                    { label: 'Track medications', completed: log.medications },
+                    { label: 'Note foods eaten', completed: log.foods },
+                    { label: 'Log activities', completed: log.activities }
+                ];
+
+                checklist.innerHTML = items.map(item => `
+                    <div class="checklist-item ${item.completed ? 'checked' : ''}">
+                        <div class="checkbox">
+                            <span class="checkbox-icon">✓</span>
+                        </div>
+                        <div class="checklist-label">${item.label}</div>
+                    </div>
+                `).join('');
+            }
+
+            updateHomeView() {
+                // Count seizures this month
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                
+                const monthCount = this.data.seizures.filter(s => {
+                    const d = new Date(s.timestamp);
+                    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+                }).length;
+
+                document.getElementById('seizureCount').textContent = monthCount;
+
+                // Days since last seizure
+                if (this.data.seizures.length > 0) {
+                    const sorted = this.data.seizures.sort((a, b) => 
+                        new Date(b.timestamp) - new Date(a.timestamp)
+                    );
+                    const lastSeizure = new Date(sorted[0].timestamp);
+                    const daysSince = Math.floor((now - lastSeizure) / (1000 * 60 * 60 * 24));
+                    document.getElementById('daysSinceLast').textContent = daysSince;
+                } else {
+                    document.getElementById('daysSinceLast').textContent = '—';
+                }
+            }
+
+            updateHistoryView() {
+                const list = document.getElementById('historyList');
+                
+                if (this.data.seizures.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <div class="empty-text">No seizures logged yet</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const sorted = this.data.seizures.sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+
+                list.innerHTML = sorted.map(seizure => `
+                    <div class="history-item">
+                        <div class="history-header">
+                            <div>
+                                <div class="history-date">${seizure.date}</div>
+                                <div class="history-time">${seizure.time}</div>
+                            </div>
+                            <div class="history-badge">SEIZURE</div>
+                        </div>
+                        ${seizure.hasDetails ? `
+                            <div class="history-details">
+                                ${seizure.type ? `
+                                    <div class="history-detail">
+                                        <div class="history-detail-label">Type:</div>
+                                        <div class="history-detail-value">${seizure.type}</div>
+                                    </div>
+                                ` : ''}
+                                ${seizure.duration ? `
+                                    <div class="history-detail">
+                                        <div class="history-detail-label">Duration:</div>
+                                        <div class="history-detail-value">${seizure.duration} min</div>
+                                    </div>
+                                ` : ''}
+                                ${seizure.aura ? `
+                                    <div class="history-detail">
+                                        <div class="history-detail-label">Aura:</div>
+                                        <div class="history-detail-value">${seizure.aura}</div>
+                                    </div>
+                                ` : ''}
+                                ${seizure.notes ? `
+                                    <div class="history-detail">
+                                        <div class="history-detail-label">Notes:</div>
+                                        <div class="history-detail-value">${seizure.notes}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : '<div style="color: var(--text-light); font-size: 14px; margin-top: 8px;">Quick log - no details recorded</div>'}
+                    </div>
+                `).join('');
+            }
+
+            setupSettings() {
+                // Emergency contact
+                document.getElementById('emergencyName').addEventListener('change', (e) => {
+                    this.data.emergencyContact.name = e.target.value;
+                    this.saveData();
+                    this.updateEmergencyCallButton();
+                });
+
+                document.getElementById('emergencyPhone').addEventListener('change', (e) => {
+                    this.data.emergencyContact.phone = e.target.value;
+                    this.saveData();
+                    this.updateEmergencyCallButton();
+                });
+
+                // Medications
+                document.getElementById('saveMeds').addEventListener('click', () => {
+                    this.data.medications = document.getElementById('regularMeds').value;
+                    this.saveData();
+                    this.showSuccessToast('Medications saved!');
+                });
+
+                // Export
+                document.getElementById('exportBtn').addEventListener('click', () => {
+                    this.exportToCSV();
+                });
+
+                // Clear data
+                document.getElementById('clearDataBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete all data? This cannot be undone.')) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                });
+            }
+
+            loadSettings() {
+                document.getElementById('emergencyName').value = this.data.emergencyContact.name || '';
+                document.getElementById('emergencyPhone').value = this.data.emergencyContact.phone || '';
+                document.getElementById('regularMeds').value = this.data.medications || '';
+                this.updateEmergencyCallButton();
+            }
+
+            updateEmergencyCallButton() {
+                const btn = document.getElementById('callEmergencyBtn');
+                if (this.data.emergencyContact.phone) {
+                    btn.style.display = 'block';
+                    btn.href = `tel:${this.data.emergencyContact.phone}`;
+                } else {
+                    btn.style.display = 'none';
+                }
+            }
+
+            exportToCSV() {
+                if (this.data.seizures.length === 0) {
+                    alert('No seizure data to export');
+                    return;
+                }
+
+                let csv = 'Date,Time,Type,Duration (min),Aura,Notes\n';
+                
+                this.data.seizures.forEach(s => {
+                    csv += `"${s.date}","${s.time}","${s.type || ''}","${s.duration || ''}","${s.aura || ''}","${s.notes || ''}"\n`;
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `seizure-log-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                this.showSuccessToast('Export complete!');
+            }
+
+            formatDate(date) {
+                return date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+
+            formatTime(date) {
+                return date.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+            }
+
+            showSuccessToast(message) {
+                // Simple success feedback
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #86EFAC 0%, #4ADE80 100%);
+                    color: white;
+                    padding: 18px 28px;
+                    border-radius: 16px;
+                    font-weight: 700;
+                    z-index: 10000;
+                    box-shadow: 0 6px 25px rgba(134, 239, 172, 0.4);
+                    border: 2px solid rgba(255, 255, 255, 0.5);
+                `;
+                toast.textContent = '✨ ' + message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        }
+
+        // Initialize app
+        const tracker = new SeizureTracker();
+
+        // Close modal on overlay click
+        document.getElementById('quickLogModal').addEventListener('click', (e) => {
+            if (e.target.id === 'quickLogModal') {
+                tracker.closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
