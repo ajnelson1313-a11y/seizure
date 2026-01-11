@@ -902,62 +902,54 @@
                     <div class="form-group">
                         <label class="form-label">Moods Throughout the Day</label>
                         <div style="display: flex; flex-direction: column; gap: 12px;" id="moodCheckboxes">
-                            <label class="checklist-item" style="cursor: pointer;">
+                            <div class="checklist-item mood-checkbox" data-mood="Happy">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Happy" style="display: none;">
                                 <div class="checklist-label">😊 Happy</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Calm">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Calm" style="display: none;">
                                 <div class="checklist-label">😌 Calm</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Anxious">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Anxious" style="display: none;">
                                 <div class="checklist-label">😰 Anxious</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Sad">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Sad" style="display: none;">
                                 <div class="checklist-label">😔 Sad</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Stressed">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Stressed" style="display: none;">
                                 <div class="checklist-label">😣 Stressed</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Energetic">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Energetic" style="display: none;">
                                 <div class="checklist-label">⚡ Energetic</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Tired">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Tired" style="display: none;">
                                 <div class="checklist-label">😴 Tired</div>
-                            </label>
-                            <label class="checklist-item" style="cursor: pointer;">
+                            </div>
+                            <div class="checklist-item mood-checkbox" data-mood="Irritable">
                                 <div class="checkbox">
                                     <span class="checkbox-icon">✓</span>
                                 </div>
-                                <input type="checkbox" value="Irritable" style="display: none;">
                                 <div class="checklist-label">😠 Irritable</div>
-                            </label>
+                            </div>
                         </div>
                     </div>
 
@@ -1273,13 +1265,10 @@
                 });
 
                 // Mood checkboxes
-                document.getElementById('moodCheckboxes').addEventListener('click', (e) => {
-                    const label = e.target.closest('label');
-                    if (label && label.classList.contains('checklist-item')) {
-                        const checkbox = label.querySelector('input[type="checkbox"]');
-                        checkbox.checked = !checkbox.checked;
-                        label.classList.toggle('checked');
-                    }
+                document.querySelectorAll('.mood-checkbox').forEach(item => {
+                    item.addEventListener('click', () => {
+                        item.classList.toggle('checked');
+                    });
                 });
 
                 // Save daily log
@@ -1290,8 +1279,8 @@
 
             saveDailyLog() {
                 const today = new Date().toLocaleDateString();
-                const selectedMoods = Array.from(document.querySelectorAll('#moodCheckboxes input[type="checkbox"]:checked'))
-                    .map(cb => cb.value);
+                const selectedMoods = Array.from(document.querySelectorAll('.mood-checkbox.checked'))
+                    .map(item => item.dataset.mood);
                 
                 const log = {
                     date: today,
