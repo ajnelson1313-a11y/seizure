@@ -836,26 +836,47 @@
                     this.todayMedications.push(value);
                     input.value = '';
                     this.renderMedications();
+                    // Force a reflow to ensure visibility on mobile
+                    const container = document.getElementById('medicationsList');
+                    container.style.display = 'none';
+                    container.offsetHeight; // Trigger reflow
+                    container.style.display = 'block';
                 }
             }
 
             removeMedication(index) {
                 this.todayMedications.splice(index, 1);
                 this.renderMedications();
+                // Force a reflow
+                const container = document.getElementById('medicationsList');
+                container.style.display = 'none';
+                container.offsetHeight; // Trigger reflow
+                container.style.display = 'block';
             }
 
             renderMedications() {
                 const container = document.getElementById('medicationsList');
+                console.log('Rendering medications:', this.todayMedications); // Debug log
+                
                 if (this.todayMedications.length === 0) {
                     container.innerHTML = '';
+                    container.style.marginBottom = '0';
+                    container.style.display = 'none';
                     return;
                 }
-                container.innerHTML = this.todayMedications.map((med, index) => `
-                    <span class="tag-item">
-                        💊 ${med}
-                        <button class="tag-remove" onclick="tracker.removeMedication(${index})">×</button>
-                    </span>
+                
+                container.style.display = 'block';
+                container.style.marginBottom = '12px';
+                
+                const html = this.todayMedications.map((med, index) => `
+                    <div class="tag-item">
+                        <span class="tag-content">💊 ${med}</span>
+                        <button class="tag-remove" onclick="event.preventDefault(); event.stopPropagation(); tracker.removeMedication(${index});" type="button">×</button>
+                    </div>
                 `).join('');
+                
+                container.innerHTML = html;
+                console.log('Medications rendered, HTML length:', html.length); // Debug log
             }
 
             animateSquirrel(viewId) {
