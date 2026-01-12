@@ -208,12 +208,14 @@
         .calendar-day.no-seizure {
             background: var(--gradient-primary);
             color: white;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4);
         }
         .calendar-day.has-seizure {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%);
             color: white;
-            border: 3px solid #991B1B;
-            font-weight: 800;
+            border: 2px solid #FCA5A5;
+            font-weight: 700;
             position: relative;
         }
         .calendar-day.has-seizure::after {
@@ -247,6 +249,159 @@
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 16px;
+        }
+        .tag-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-soft);
+            border: 2px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin: 4px;
+            font-weight: 600;
+        }
+        .tag-remove {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 700;
+            padding: 0;
+            line-height: 1;
+        }
+        .squirrel-mascot {
+            position: fixed;
+            font-size: 60px;
+            z-index: 999;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+            opacity: 0;
+        }
+        @keyframes slideInBounce {
+            0% { 
+                transform: translateX(-150px) translateY(0) rotate(-20deg) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translateX(20px) translateY(-30px) rotate(10deg) scale(1.1);
+                opacity: 1;
+            }
+            70% {
+                transform: translateX(-10px) translateY(-15px) rotate(-5deg) scale(0.95);
+            }
+            100% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes slideInFromRight {
+            0% { 
+                transform: translateX(150px) translateY(0) rotate(20deg) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translateX(-20px) translateY(-40px) rotate(-15deg) scale(1.15);
+                opacity: 1;
+            }
+            70% {
+                transform: translateX(10px) translateY(-20px) rotate(8deg) scale(0.9);
+            }
+            100% { 
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes slideInFromTop {
+            0% { 
+                transform: translateY(-150px) rotate(180deg) scale(0.3);
+                opacity: 0;
+            }
+            40% {
+                transform: translateY(30px) rotate(-10deg) scale(1.2);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(-15px) rotate(5deg) scale(0.95);
+            }
+            80% {
+                transform: translateY(10px) rotate(-3deg) scale(1.05);
+            }
+            100% { 
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes slideInFromBottom {
+            0% { 
+                transform: translateY(150px) rotate(-90deg) scale(0.4);
+                opacity: 0;
+            }
+            45% {
+                transform: translateY(-35px) rotate(15deg) scale(1.25);
+                opacity: 1;
+            }
+            65% {
+                transform: translateY(15px) rotate(-8deg) scale(0.92);
+            }
+            85% {
+                transform: translateY(-8px) rotate(4deg) scale(1.08);
+            }
+            100% { 
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes wiggleHappy {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            10% { transform: rotate(-15deg) scale(1.1); }
+            20% { transform: rotate(15deg) scale(0.95); }
+            30% { transform: rotate(-12deg) scale(1.08); }
+            40% { transform: rotate(12deg) scale(0.97); }
+            50% { transform: rotate(-8deg) scale(1.05); }
+            60% { transform: rotate(8deg) scale(0.98); }
+            70% { transform: rotate(-5deg) scale(1.03); }
+            80% { transform: rotate(5deg) scale(0.99); }
+            90% { transform: rotate(-2deg) scale(1.01); }
+        }
+        @keyframes peek {
+            0%, 100% { transform: translateX(0) scale(1); opacity: 1; }
+            25% { transform: translateX(-15px) scale(1.15) rotate(-10deg); opacity: 1; }
+            50% { transform: translateX(-30px) scale(1.3) rotate(-15deg); opacity: 1; }
+            75% { transform: translateX(-15px) scale(1.15) rotate(-10deg); opacity: 1; }
+        }
+        @keyframes dance {
+            0% { transform: translateY(0) rotate(0deg) scaleX(1); }
+            15% { transform: translateY(-25px) rotate(-12deg) scaleX(0.95); }
+            30% { transform: translateY(-15px) rotate(12deg) scaleX(1.05); }
+            45% { transform: translateY(-30px) rotate(-8deg) scaleX(0.98); }
+            60% { transform: translateY(-10px) rotate(8deg) scaleX(1.03); }
+            75% { transform: translateY(-20px) rotate(-5deg) scaleX(0.97); }
+            90% { transform: translateY(-5px) rotate(5deg) scaleX(1.02); }
+            100% { transform: translateY(0) rotate(0deg) scaleX(1); }
+        }
+        .squirrel-slide-left {
+            animation: slideInBounce 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .squirrel-slide-right {
+            animation: slideInFromRight 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .squirrel-slide-top {
+            animation: slideInFromTop 1.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .squirrel-slide-bottom {
+            animation: slideInFromBottom 1.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .squirrel-wiggle {
+            animation: wiggleHappy 1.5s ease-in-out infinite;
+        }
+        .squirrel-peek {
+            animation: peek 2s ease-in-out infinite;
+        }
+        .squirrel-dance {
+            animation: dance 1s ease-in-out infinite;
         }
     </style>
 </head>
@@ -325,22 +480,46 @@
                         <div class="checkbox"><span class="checkbox-icon">✓</span></div>
                         <div class="checklist-label">😠 Irritable</div>
                     </div>
+                    <div class="checklist-item mood-checkbox" data-mood="Anger">
+                        <div class="checkbox"><span class="checkbox-icon">✓</span></div>
+                        <div class="checklist-label">😡 Anger</div>
+                    </div>
+                    <div class="checklist-item mood-checkbox" data-mood="OCD">
+                        <div class="checkbox"><span class="checkbox-icon">✓</span></div>
+                        <div class="checklist-label">🔄 OCD</div>
+                    </div>
+                    <div class="checklist-item mood-checkbox" data-mood="Depression">
+                        <div class="checkbox"><span class="checkbox-icon">✓</span></div>
+                        <div class="checklist-label">😞 Depression</div>
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Medications Taken Today</label>
-                <textarea id="medications" class="form-textarea" placeholder="List medications..."></textarea>
+                <div id="medicationsList" style="margin-bottom: 12px;"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="medicationInput" class="form-input" placeholder="Enter medication..." style="margin-bottom: 0;">
+                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addMedication()">+ Add</button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Foods Eaten Today</label>
-                <textarea id="foods" class="form-textarea" placeholder="What did you eat?"></textarea>
+                <div id="foodsList" style="margin-bottom: 12px;"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="foodInput" class="form-input" placeholder="Enter food..." style="margin-bottom: 0;">
+                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addFood()">+ Add</button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Activities Today</label>
-                <textarea id="activities" class="form-textarea" placeholder="Exercise, stress, etc."></textarea>
+                <div id="activitiesList" style="margin-bottom: 12px;"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="activityInput" class="form-input" placeholder="Enter activity..." style="margin-bottom: 0;">
+                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addActivity()">+ Add</button>
+                </div>
             </div>
 
             <button class="btn btn-primary" id="saveDailyLog">💾 Save Daily Log</button>
@@ -357,11 +536,11 @@
             <div id="calendar" class="calendar-grid"></div>
             <div style="display: flex; gap: 20px; justify-content: center; margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border); flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 24px; height: 24px; background: var(--gradient-primary); border-radius: 8px;"></div>
+                    <div style="width: 24px; height: 24px; background: var(--gradient-primary); border-radius: 8px; box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4);"></div>
                     <span style="font-size: 14px; font-weight: 600;">Seizure-free</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); border-radius: 8px; border: 2px solid #991B1B;"></div>
+                    <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%); border-radius: 8px; border: 2px solid #FCA5A5;"></div>
                     <span style="font-size: 14px; font-weight: 600;">Seizure day</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -418,11 +597,19 @@
         <div class="modal-content" id="modalContent"></div>
     </div>
 
+    <div class="squirrel-mascot" id="squirrel">🐿️</div>
+
     <script>
         class SeizureTracker {
             constructor() {
                 this.data = this.loadData();
                 this.currentMonth = new Date();
+                this.todayMedications = [];
+                this.todayFoods = [];
+                this.todayActivities = [];
+                this.squirrel = document.getElementById('squirrel');
+                this.squirrelEmojis = ['🐿️', '🐿️', '🐿️', '🐿️'];
+                this.squirrelIndex = 0;
                 this.init();
             }
 
@@ -458,12 +645,19 @@
                         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                         item.classList.add('active');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        // Animate squirrel
+                        this.animateSquirrel(viewId);
+                        
                         if (viewId === 'historyView') {
                             this.renderCalendar();
                             this.updateHistoryView();
                         }
                     });
                 });
+                
+                // Initial squirrel position
+                this.positionSquirrel('homeView');
             }
 
             setupEmergencyButton() {
@@ -500,6 +694,29 @@
                     item.addEventListener('click', () => item.classList.toggle('checked'));
                 });
 
+                // Load today's data if it exists
+                const today = new Date().toLocaleDateString();
+                const todayLog = this.data.dailyLogs[today];
+                if (todayLog) {
+                    this.todayMedications = todayLog.medications || [];
+                    this.todayFoods = todayLog.foods || [];
+                    this.todayActivities = todayLog.activities || [];
+                    this.renderMedications();
+                    this.renderFoods();
+                    this.renderActivities();
+                }
+
+                // Allow Enter key to add items
+                document.getElementById('medicationInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addMedication();
+                });
+                document.getElementById('foodInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addFood();
+                });
+                document.getElementById('activityInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addActivity();
+                });
+
                 document.getElementById('saveDailyLog').addEventListener('click', () => {
                     const today = new Date().toLocaleDateString();
                     const moods = Array.from(document.querySelectorAll('.mood-checkbox.checked'))
@@ -510,9 +727,9 @@
                         sleepQuality: document.getElementById('sleepQuality').value,
                         sleepHours: document.getElementById('sleepHours').value,
                         moods,
-                        medications: document.getElementById('medications').value,
-                        foods: document.getElementById('foods').value,
-                        activities: document.getElementById('activities').value
+                        medications: this.todayMedications,
+                        foods: this.todayFoods,
+                        activities: this.todayActivities
                     };
                     this.saveData();
                     alert('Daily log saved!');
@@ -603,9 +820,9 @@
                 const items = [
                     { label: 'Log sleep', done: log.sleepHours, section: 'sleepQuality' },
                     { label: 'Record mood', done: log.moods?.length, section: 'moodCheckboxes' },
-                    { label: 'Track medications', done: log.medications, section: 'medications' },
-                    { label: 'Note foods', done: log.foods, section: 'foods' },
-                    { label: 'Log activities', done: log.activities, section: 'activities' }
+                    { label: 'Track medications', done: log.medications?.length, section: 'medicationInput' },
+                    { label: 'Note foods', done: log.foods?.length, section: 'foodInput' },
+                    { label: 'Log activities', done: log.activities?.length, section: 'activityInput' }
                 ];
                 document.getElementById('todayChecklist').innerHTML = items.map(item => `
                     <div class="checklist-item ${item.done ? 'checked' : ''}" onclick="tracker.goToDailySection('${item.section}')">
@@ -613,6 +830,157 @@
                         <div class="checklist-label">${item.label}</div>
                     </div>
                 `).join('');
+            }
+
+            addMedication() {
+                const input = document.getElementById('medicationInput');
+                const value = input.value.trim();
+                if (value) {
+                    this.todayMedications.push(value);
+                    input.value = '';
+                    this.renderMedications();
+                }
+            }
+
+            removeMedication(index) {
+                this.todayMedications.splice(index, 1);
+                this.renderMedications();
+            }
+
+            renderMedications() {
+                const container = document.getElementById('medicationsList');
+                if (this.todayMedications.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+                container.innerHTML = this.todayMedications.map((med, index) => `
+                    <span class="tag-item">
+                        💊 ${med}
+                        <button class="tag-remove" onclick="tracker.removeMedication(${index})">×</button>
+                    </span>
+                `).join('');
+            }
+
+            addFood() {
+                const input = document.getElementById('foodInput');
+                const value = input.value.trim();
+                if (value) {
+                    this.todayFoods.push(value);
+                    input.value = '';
+                    this.renderFoods();
+                }
+            }
+
+            removeFood(index) {
+                this.todayFoods.splice(index, 1);
+                this.renderFoods();
+            }
+
+            renderFoods() {
+                const container = document.getElementById('foodsList');
+                if (this.todayFoods.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+                container.innerHTML = this.todayFoods.map((food, index) => `
+                    <span class="tag-item">
+                        🍽️ ${food}
+                        <button class="tag-remove" onclick="tracker.removeFood(${index})">×</button>
+                    </span>
+                `).join('');
+            }
+
+            addActivity() {
+                const input = document.getElementById('activityInput');
+                const value = input.value.trim();
+                if (value) {
+                    this.todayActivities.push(value);
+                    input.value = '';
+                    this.renderActivities();
+                }
+            }
+
+            removeActivity(index) {
+                this.todayActivities.splice(index, 1);
+                this.renderActivities();
+            }
+
+            renderActivities() {
+                const container = document.getElementById('activitiesList');
+                if (this.todayActivities.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+                container.innerHTML = this.todayActivities.map((activity, index) => `
+                    <span class="tag-item">
+                        🏃 ${activity}
+                        <button class="tag-remove" onclick="tracker.removeActivity(${index})">×</button>
+                    </span>
+                `).join('');
+            }
+
+            animateSquirrel(viewId) {
+                // Remove any existing animation classes
+                this.squirrel.className = 'squirrel-mascot';
+                this.squirrel.style.opacity = '0';
+                
+                // Cycle through squirrel variations
+                this.squirrelIndex = (this.squirrelIndex + 1) % this.squirrelEmojis.length;
+                this.squirrel.textContent = this.squirrelEmojis[this.squirrelIndex];
+                
+                // Different entrance animations for different sections
+                const entranceAnimations = {
+                    'homeView': 'squirrel-slide-left',
+                    'dailyView': 'squirrel-slide-right',
+                    'historyView': 'squirrel-slide-top',
+                    'settingsView': 'squirrel-slide-bottom'
+                };
+                
+                // Different idle animations for different sections
+                const idleAnimations = {
+                    'homeView': 'squirrel-wiggle',
+                    'dailyView': 'squirrel-dance',
+                    'historyView': 'squirrel-peek',
+                    'settingsView': 'squirrel-wiggle'
+                };
+                
+                // Position squirrel first
+                this.positionSquirrel(viewId);
+                
+                // Add entrance animation
+                setTimeout(() => {
+                    this.squirrel.classList.add(entranceAnimations[viewId] || 'squirrel-slide-left');
+                }, 50);
+                
+                // Switch to idle animation after entrance
+                setTimeout(() => {
+                    this.squirrel.className = 'squirrel-mascot';
+                    this.squirrel.style.opacity = '1';
+                    this.squirrel.classList.add(idleAnimations[viewId] || 'squirrel-wiggle');
+                }, 1300);
+                
+                // Fade to lower opacity after some time
+                setTimeout(() => {
+                    this.squirrel.style.opacity = '0.4';
+                }, 8000);
+            }
+
+            positionSquirrel(viewId) {
+                const positions = {
+                    'homeView': { top: '20%', left: '5px' },
+                    'dailyView': { top: '25%', right: '5px', left: 'auto' },
+                    'historyView': { top: '5px', left: '50%', transform: 'translateX(-50%)' },
+                    'settingsView': { bottom: '100px', left: '5px', top: 'auto' }
+                };
+                
+                const pos = positions[viewId] || positions['homeView'];
+                
+                // Reset all position properties
+                this.squirrel.style.transform = pos.transform || '';
+                this.squirrel.style.top = pos.top || 'auto';
+                this.squirrel.style.bottom = pos.bottom || 'auto';
+                this.squirrel.style.left = pos.left || 'auto';
+                this.squirrel.style.right = pos.right || 'auto';
             }
 
             goToDailySection(sectionId) {
@@ -747,9 +1115,9 @@
                         html += '<div style="font-size: 14px; line-height: 1.8;">';
                         if (log.sleepHours) html += `<div>😴 Sleep: ${log.sleepHours} hrs (${log.sleepQuality}/10)</div>`;
                         if (log.moods?.length) html += `<div>💭 Moods: ${log.moods.join(', ')}</div>`;
-                        if (log.medications) html += `<div>💊 Medications logged</div>`;
-                        if (log.foods) html += `<div>🍽️ Foods logged</div>`;
-                        if (log.activities) html += `<div>🏃 Activities logged</div>`;
+                        if (log.medications?.length) html += `<div>💊 Medications: ${log.medications.join(', ')}</div>`;
+                        if (log.foods?.length) html += `<div>🍽️ Foods: ${log.foods.join(', ')}</div>`;
+                        if (log.activities?.length) html += `<div>🏃 Activities: ${log.activities.join(', ')}</div>`;
                         html += '</div>';
                     }
                     
