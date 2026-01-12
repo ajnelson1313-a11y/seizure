@@ -512,11 +512,7 @@
 
             <div class="form-group">
                 <label class="form-label">Medications Taken Today</label>
-                <div id="medicationsList"></div>
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <input type="text" id="medicationInput" class="form-input" placeholder="Enter medication..." style="margin-bottom: 0; flex: 1;">
-                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 20px; white-space: nowrap; flex-shrink: 0;" onclick="tracker.addMedication()">+ Add</button>
-                </div>
+                <textarea id="medications" class="form-textarea" placeholder="List medications..."></textarea>
             </div>
 
             <div class="form-group">
@@ -611,7 +607,6 @@
             constructor() {
                 this.data = this.loadData();
                 this.currentMonth = new Date();
-                this.todayMedications = [];
                 this.squirrel = document.getElementById('squirrel');
                 this.squirrelEmojis = ['🐿️', '🐿️', '🐿️', '🐿️'];
                 this.squirrelIndex = 0;
@@ -703,16 +698,10 @@
                 const today = new Date().toLocaleDateString();
                 const todayLog = this.data.dailyLogs[today];
                 if (todayLog) {
-                    this.todayMedications = todayLog.medications || [];
-                    this.renderMedications();
+                    if (todayLog.medications) document.getElementById('medications').value = todayLog.medications;
                     if (todayLog.foods) document.getElementById('foods').value = todayLog.foods;
                     if (todayLog.activities) document.getElementById('activities').value = todayLog.activities;
                 }
-
-                // Allow Enter key to add medications
-                document.getElementById('medicationInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.addMedication();
-                });
 
                 document.getElementById('saveDailyLog').addEventListener('click', () => {
                     const today = new Date().toLocaleDateString();
@@ -724,7 +713,7 @@
                         sleepQuality: document.getElementById('sleepQuality').value,
                         sleepHours: document.getElementById('sleepHours').value,
                         moods,
-                        medications: this.todayMedications,
+                        medications: document.getElementById('medications').value,
                         foods: document.getElementById('foods').value,
                         activities: document.getElementById('activities').value
                     };
@@ -817,7 +806,7 @@
                 const items = [
                     { label: 'Log sleep', done: log.sleepHours, section: 'sleepQuality' },
                     { label: 'Record mood', done: log.moods?.length, section: 'moodCheckboxes' },
-                    { label: 'Track medications', done: log.medications?.length, section: 'medicationInput' },
+                    { label: 'Track medications', done: log.medications, section: 'medications' },
                     { label: 'Note foods', done: log.foods, section: 'foods' },
                     { label: 'Log activities', done: log.activities, section: 'activities' }
                 ];
@@ -827,56 +816,6 @@
                         <div class="checklist-label">${item.label}</div>
                     </div>
                 `).join('');
-            }
-
-            addMedication() {
-                const input = document.getElementById('medicationInput');
-                const value = input.value.trim();
-                if (value) {
-                    this.todayMedications.push(value);
-                    input.value = '';
-                    this.renderMedications();
-                    // Force a reflow to ensure visibility on mobile
-                    const container = document.getElementById('medicationsList');
-                    container.style.display = 'none';
-                    container.offsetHeight; // Trigger reflow
-                    container.style.display = 'block';
-                }
-            }
-
-            removeMedication(index) {
-                this.todayMedications.splice(index, 1);
-                this.renderMedications();
-                // Force a reflow
-                const container = document.getElementById('medicationsList');
-                container.style.display = 'none';
-                container.offsetHeight; // Trigger reflow
-                container.style.display = 'block';
-            }
-
-            renderMedications() {
-                const container = document.getElementById('medicationsList');
-                console.log('Rendering medications:', this.todayMedications); // Debug log
-                
-                if (this.todayMedications.length === 0) {
-                    container.innerHTML = '';
-                    container.style.marginBottom = '0';
-                    container.style.display = 'none';
-                    return;
-                }
-                
-                container.style.display = 'block';
-                container.style.marginBottom = '12px';
-                
-                const html = this.todayMedications.map((med, index) => `
-                    <div class="tag-item">
-                        <span class="tag-content">💊 ${med}</span>
-                        <button class="tag-remove" onclick="event.preventDefault(); event.stopPropagation(); tracker.removeMedication(${index});" type="button">×</button>
-                    </div>
-                `).join('');
-                
-                container.innerHTML = html;
-                console.log('Medications rendered, HTML length:', html.length); // Debug log
             }
 
             animateSquirrel(viewId) {
@@ -1075,7 +1014,7 @@
                         html += '<div style="font-size: 14px; line-height: 1.8;">';
                         if (log.sleepHours) html += `<div>😴 Sleep: ${log.sleepHours} hrs (${log.sleepQuality}/10)</div>`;
                         if (log.moods?.length) html += `<div>💭 Moods: ${log.moods.join(', ')}</div>`;
-                        if (log.medications?.length) html += `<div>💊 Medications: ${log.medications.join(', ')}</div>`;
+                        if (log.medications) html += `<div>💊 Medications: ${log.medications}</div>`;
                         if (log.foods) html += `<div>🍽️ Foods: ${log.foods}</div>`;
                         if (log.activities) html += `<div>🏃 Activities: ${log.activities}</div>`;
                         html += '</div>';
