@@ -212,9 +212,9 @@
             box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4);
         }
         .calendar-day.has-seizure {
-            background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
-            border: 2px solid #FCA5A5;
+            border: 2px solid #3730a3;
             font-weight: 700;
             position: relative;
         }
@@ -506,20 +506,12 @@
 
             <div class="form-group">
                 <label class="form-label">Foods Eaten Today</label>
-                <div id="foodsList" style="margin-bottom: 12px;"></div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="foodInput" class="form-input" placeholder="Enter food..." style="margin-bottom: 0;">
-                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addFood()">+ Add</button>
-                </div>
+                <textarea id="foods" class="form-textarea" placeholder="What did you eat?"></textarea>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Activities Today</label>
-                <div id="activitiesList" style="margin-bottom: 12px;"></div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="activityInput" class="form-input" placeholder="Enter activity..." style="margin-bottom: 0;">
-                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addActivity()">+ Add</button>
-                </div>
+                <textarea id="activities" class="form-textarea" placeholder="Exercise, stress, etc."></textarea>
             </div>
 
             <button class="btn btn-primary" id="saveDailyLog">💾 Save Daily Log</button>
@@ -540,7 +532,7 @@
                     <span style="font-size: 14px; font-weight: 600;">Seizure-free</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%); border-radius: 8px; border: 2px solid #FCA5A5;"></div>
+                    <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); border-radius: 8px; border: 2px solid #3730a3;"></div>
                     <span style="font-size: 14px; font-weight: 600;">Seizure day</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -605,8 +597,6 @@
                 this.data = this.loadData();
                 this.currentMonth = new Date();
                 this.todayMedications = [];
-                this.todayFoods = [];
-                this.todayActivities = [];
                 this.squirrel = document.getElementById('squirrel');
                 this.squirrelEmojis = ['🐿️', '🐿️', '🐿️', '🐿️'];
                 this.squirrelIndex = 0;
@@ -699,22 +689,14 @@
                 const todayLog = this.data.dailyLogs[today];
                 if (todayLog) {
                     this.todayMedications = todayLog.medications || [];
-                    this.todayFoods = todayLog.foods || [];
-                    this.todayActivities = todayLog.activities || [];
                     this.renderMedications();
-                    this.renderFoods();
-                    this.renderActivities();
+                    if (todayLog.foods) document.getElementById('foods').value = todayLog.foods;
+                    if (todayLog.activities) document.getElementById('activities').value = todayLog.activities;
                 }
 
-                // Allow Enter key to add items
+                // Allow Enter key to add medications
                 document.getElementById('medicationInput').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') this.addMedication();
-                });
-                document.getElementById('foodInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.addFood();
-                });
-                document.getElementById('activityInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.addActivity();
                 });
 
                 document.getElementById('saveDailyLog').addEventListener('click', () => {
@@ -728,8 +710,8 @@
                         sleepHours: document.getElementById('sleepHours').value,
                         moods,
                         medications: this.todayMedications,
-                        foods: this.todayFoods,
-                        activities: this.todayActivities
+                        foods: document.getElementById('foods').value,
+                        activities: document.getElementById('activities').value
                     };
                     this.saveData();
                     alert('Daily log saved!');
@@ -821,8 +803,8 @@
                     { label: 'Log sleep', done: log.sleepHours, section: 'sleepQuality' },
                     { label: 'Record mood', done: log.moods?.length, section: 'moodCheckboxes' },
                     { label: 'Track medications', done: log.medications?.length, section: 'medicationInput' },
-                    { label: 'Note foods', done: log.foods?.length, section: 'foodInput' },
-                    { label: 'Log activities', done: log.activities?.length, section: 'activityInput' }
+                    { label: 'Note foods', done: log.foods, section: 'foods' },
+                    { label: 'Log activities', done: log.activities, section: 'activities' }
                 ];
                 document.getElementById('todayChecklist').innerHTML = items.map(item => `
                     <div class="checklist-item ${item.done ? 'checked' : ''}" onclick="tracker.goToDailySection('${item.section}')">
@@ -857,64 +839,6 @@
                     <span class="tag-item">
                         💊 ${med}
                         <button class="tag-remove" onclick="tracker.removeMedication(${index})">×</button>
-                    </span>
-                `).join('');
-            }
-
-            addFood() {
-                const input = document.getElementById('foodInput');
-                const value = input.value.trim();
-                if (value) {
-                    this.todayFoods.push(value);
-                    input.value = '';
-                    this.renderFoods();
-                }
-            }
-
-            removeFood(index) {
-                this.todayFoods.splice(index, 1);
-                this.renderFoods();
-            }
-
-            renderFoods() {
-                const container = document.getElementById('foodsList');
-                if (this.todayFoods.length === 0) {
-                    container.innerHTML = '';
-                    return;
-                }
-                container.innerHTML = this.todayFoods.map((food, index) => `
-                    <span class="tag-item">
-                        🍽️ ${food}
-                        <button class="tag-remove" onclick="tracker.removeFood(${index})">×</button>
-                    </span>
-                `).join('');
-            }
-
-            addActivity() {
-                const input = document.getElementById('activityInput');
-                const value = input.value.trim();
-                if (value) {
-                    this.todayActivities.push(value);
-                    input.value = '';
-                    this.renderActivities();
-                }
-            }
-
-            removeActivity(index) {
-                this.todayActivities.splice(index, 1);
-                this.renderActivities();
-            }
-
-            renderActivities() {
-                const container = document.getElementById('activitiesList');
-                if (this.todayActivities.length === 0) {
-                    container.innerHTML = '';
-                    return;
-                }
-                container.innerHTML = this.todayActivities.map((activity, index) => `
-                    <span class="tag-item">
-                        🏃 ${activity}
-                        <button class="tag-remove" onclick="tracker.removeActivity(${index})">×</button>
                     </span>
                 `).join('');
             }
@@ -1116,8 +1040,8 @@
                         if (log.sleepHours) html += `<div>😴 Sleep: ${log.sleepHours} hrs (${log.sleepQuality}/10)</div>`;
                         if (log.moods?.length) html += `<div>💭 Moods: ${log.moods.join(', ')}</div>`;
                         if (log.medications?.length) html += `<div>💊 Medications: ${log.medications.join(', ')}</div>`;
-                        if (log.foods?.length) html += `<div>🍽️ Foods: ${log.foods.join(', ')}</div>`;
-                        if (log.activities?.length) html += `<div>🏃 Activities: ${log.activities.join(', ')}</div>`;
+                        if (log.foods) html += `<div>🍽️ Foods: ${log.foods}</div>`;
+                        if (log.activities) html += `<div>🏃 Activities: ${log.activities}</div>`;
                         html += '</div>';
                     }
                     
