@@ -9,12 +9,14 @@
         :root {
             --primary: #C084FC;
             --secondary: #F472B6;
+            --accent: #FDE047;
             --bg: linear-gradient(135deg, #FDF4FF 0%, #FAF5FF 50%, #FEF3F9 100%);
             --text: #4A1D5F;
             --border: #F3E8FF;
             --gradient-primary: linear-gradient(135deg, #C084FC 0%, #F472B6 100%);
             --gradient-secondary: linear-gradient(135deg, #F472B6 0%, #FCA5A5 100%);
             --gradient-soft: linear-gradient(135deg, #FAE8FF 0%, #FCE7F3 100%);
+            --gradient-gold: linear-gradient(135deg, #FDE047 0%, #FBBF24 100%);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -28,6 +30,32 @@
             color: white;
             padding: 24px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-header::before {
+            content: '✨';
+            position: absolute;
+            font-size: 30px;
+            top: 20px;
+            left: 20px;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        .app-header::after {
+            content: '💜';
+            position: absolute;
+            font-size: 30px;
+            top: 20px;
+            right: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.5; transform: scale(1.3) rotate(180deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         .app-title { font-size: 32px; font-weight: 700; }
         .stats-grid {
@@ -42,8 +70,26 @@
             padding: 28px 20px;
             border-radius: 24px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-value { font-size: 42px; font-weight: 800; }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .stat-value { font-size: 42px; font-weight: 800; position: relative; z-index: 1; }
+        .stat-label { position: relative; z-index: 1; }
         .emergency-btn {
             width: calc(100% - 48px);
             margin: 0 24px 24px;
@@ -55,6 +101,258 @@
             font-size: 34px;
             font-weight: 700;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 24px rgba(244, 114, 182, 0.3);
+        }
+        .emergency-btn:active {
+            transform: scale(0.98);
+        }
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-gold);
+            color: #78350f;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 18px;
+            margin: 0 24px 20px;
+            box-shadow: 0 4px 12px rgba(253, 224, 71, 0.4);
+        }
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 40px;
+            border-radius: 32px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .achievement-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .achievement-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: celebrate 0.6s ease-in-out;
+        }
+        @keyframes celebrate {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.2); }
+            75% { transform: rotate(15deg) scale(1.2); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 3000;
+            pointer-events: none;
+        }
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .motivational-quote {
+            background: linear-gradient(135deg, #FDE047 0%, #FBBF24 100%);
+            color: #78350f;
+            padding: 20px 24px;
+            margin: 0 24px 20px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(253, 224, 71, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 4px 12px rgba(253, 224, 71, 0.3); }
+            50% { box-shadow: 0 4px 20px rgba(253, 224, 71, 0.6); }
+        }
+        .wellness-tip {
+            background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 100%);
+            color: #065F46;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .wellness-tip-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .mood-emoji-select {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .mood-emoji {
+            font-size: 40px;
+            padding: 16px;
+            border-radius: 20px;
+            background: var(--gradient-soft);
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .mood-emoji.selected {
+            background: var(--gradient-primary);
+            border-color: var(--secondary);
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(192, 132, 252, 0.4);
+        }
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .floating-hearts {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2500;
+            font-size: 24px;
+            animation: float-up 3s ease-in-out forwards;
+        }
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) rotate(180deg);
+                opacity: 0;
+            }
+        }
+        .sticker-collection {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            background: var(--gradient-soft);
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .sticker {
+            font-size: 50px;
+            filter: grayscale(100%);
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        .sticker.earned {
+            filter: grayscale(0%);
+            opacity: 1;
+            animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .mood-tracker-visual {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
+        .mood-day {
+            flex: 1;
+            height: 60px;
+            border-radius: 12px;
+            background: #E5E7EB;
+            position: relative;
+            overflow: hidden;
+        }
+        .mood-day.happy { background: linear-gradient(135deg, #FDE047 0%, #FBBF24 100%); }
+        .mood-day.calm { background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 100%); }
+        .mood-day.sad { background: linear-gradient(135deg, #BFDBFE 0%, #93C5FD 100%); }
+        .mood-day.stressed { background: linear-gradient(135deg, #FBCFE8 0%, #F9A8D4 100%); }
+        .seasonal-theme {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.15;
+        }
+        .reward-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 4px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        .emoji-trail {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2500;
+            font-size: 20px;
+            animation: trail-fade 1s ease-out forwards;
+        }
+        @keyframes trail-fade {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) translateY(-30px);
+            }
+        }
+        .calendar-day.today {
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 20px rgba(253, 224, 71, 0.5);
+            animation: pulse-today 2s ease-in-out infinite;
+        }
+        @keyframes pulse-today {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .wellness-score {
+            text-align: center;
+            padding: 24px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 24px;
+            margin-bottom: 20px;
+        }
+        .wellness-score-value {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .wellness-score-label {
+            font-size: 18px;
+            margin-top: 8px;
+        }
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        .celebration-mode {
+            animation: rainbow 3s linear infinite;
         }
         .view-container { display: none; padding: 24px; }
         .view-container.active { display: block; }
@@ -64,10 +362,24 @@
             padding: 28px;
             margin-bottom: 20px;
             border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(192, 132, 252, 0.1);
         }
-        .card-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
+        .card-title { 
+            font-size: 22px; 
+            font-weight: 700; 
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .form-group { margin-bottom: 24px; }
-        .form-label { display: block; font-weight: 700; margin-bottom: 12px; }
+        .form-label { 
+            display: block; 
+            font-weight: 700; 
+            margin-bottom: 12px;
+            color: var(--text);
+        }
         .form-input, .form-textarea {
             width: 100%;
             padding: 18px;
@@ -75,6 +387,12 @@
             border: 2px solid var(--border);
             border-radius: 16px;
             font-family: 'Nunito', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.1);
         }
         .form-textarea { min-height: 120px; }
         .btn {
@@ -85,11 +403,16 @@
             border-radius: 16px;
             cursor: pointer;
             font-family: 'Nunito', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.98);
         }
         .btn-primary {
             background: var(--gradient-primary);
             color: white;
             width: 100%;
+            box-shadow: 0 4px 12px rgba(192, 132, 252, 0.3);
         }
         .btn-secondary {
             background: var(--gradient-soft);
@@ -105,10 +428,20 @@
             margin-bottom: 12px;
             cursor: pointer;
             border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .checklist-item:hover {
+            transform: translateX(4px);
         }
         .checklist-item.checked {
             background: rgba(244, 114, 182, 0.15);
             border-color: var(--secondary);
+        }
+        .checklist-item.checked::after {
+            content: '✨';
+            margin-left: auto;
+            font-size: 20px;
+            animation: sparkle 1s ease-in-out infinite;
         }
         .checkbox {
             width: 36px;
@@ -120,10 +453,12 @@
             align-items: center;
             justify-content: center;
             background: white;
+            transition: all 0.3s;
         }
         .checklist-item.checked .checkbox {
             background: var(--gradient-secondary);
             border-color: var(--secondary);
+            transform: rotate(360deg);
         }
         .checkbox-icon {
             color: white;
@@ -141,6 +476,7 @@
             display: flex;
             border-top: 2px solid var(--border);
             z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
         }
         .nav-item {
             flex: 1;
@@ -152,8 +488,12 @@
             background: none;
             border: none;
             font-family: 'Nunito', sans-serif;
+            transition: all 0.3s;
         }
-        .nav-item.active { background: var(--gradient-soft); }
+        .nav-item.active { 
+            background: var(--gradient-soft);
+            transform: scale(1.05);
+        }
         .nav-icon { font-size: 26px; }
         .nav-label { font-size: 12px; font-weight: 700; }
         .slider-value {
@@ -161,12 +501,35 @@
             font-size: 28px;
             font-weight: 800;
             margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         input[type="range"] {
             width: 100%;
             height: 14px;
             border-radius: 10px;
             background: var(--gradient-soft);
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4);
         }
         .modal-overlay {
             position: fixed;
@@ -428,20 +791,69 @@
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-value" id="seizureCount">0</div>
-            <div>Seizures This Month</div>
+            <div class="stat-label">Seizures This Month</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="daysSinceLast">—</div>
-            <div>Days Seizure-Free</div>
+            <div class="stat-label">Days Seizure-Free</div>
         </div>
+    </div>
+
+    <div id="streakBadge" style="display: none;" class="streak-badge">
+        <span>🔥</span>
+        <span id="streakText">7 Day Tracking Streak!</span>
+    </div>
+
+    <div id="motivationalQuote" class="motivational-quote" style="display: none;">
+        💫 You're doing amazing! Keep tracking your wellness journey! 💫
     </div>
 
     <button class="emergency-btn" id="emergencyBtn">🚨 LOG SEIZURE NOW</button>
 
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-icon" id="achievementIcon">🎉</div>
+        <h2 id="achievementTitle">Amazing!</h2>
+        <p id="achievementMessage">You're doing great!</p>
+    </div>
+
+    <div id="emojiTrail"></div>
+    <div id="confettiContainer"></div>
+
     <div id="homeView" class="view-container active">
         <div class="card">
+            <div class="card-title">🌟 Your Wellness Score</div>
+            <div class="wellness-score">
+                <div class="wellness-score-value" id="wellnessScore">—</div>
+                <div class="wellness-score-label">Keep it up!</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🏆 Achievement Stickers</div>
+            <div class="sticker-collection" id="stickerCollection">
+                <span class="sticker" data-achievement="first-log">🌸</span>
+                <span class="sticker" data-achievement="week-streak">🔥</span>
+                <span class="sticker" data-achievement="month-streak">💎</span>
+                <span class="sticker" data-achievement="mood-master">😊</span>
+                <span class="sticker" data-achievement="sleep-champion">😴</span>
+                <span class="sticker" data-achievement="week-seizure-free">🌟</span>
+                <span class="sticker" data-achievement="month-seizure-free">👑</span>
+                <span class="sticker" data-achievement="super-tracker">🦋</span>
+            </div>
+        </div>
+
+        <div class="card">
             <div class="card-title">✓ Today's Checklist</div>
+            <div class="wellness-tip">
+                <span class="wellness-tip-icon">💡</span>
+                <span id="dailyTip">Track your wellness daily to spot patterns and feel empowered!</span>
+            </div>
             <div id="todayChecklist"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📊 This Week's Mood Journey</div>
+            <div class="mood-tracker-visual" id="weekMoodTracker"></div>
         </div>
     </div>
 
@@ -610,6 +1022,32 @@
                 this.squirrel = document.getElementById('squirrel');
                 this.squirrelEmojis = ['🐿️', '🐿️', '🐿️', '🐿️'];
                 this.squirrelIndex = 0;
+                this.quotes = [
+                    "💫 You're doing amazing! Keep tracking your wellness journey! 💫",
+                    "🌟 Every day you track is a step toward understanding yourself better! 🌟",
+                    "💖 Your health matters! Keep up the great work! 💖",
+                    "🌸 Small steps lead to big changes! You've got this! 🌸",
+                    "✨ Tracking your wellness is an act of self-love! ✨",
+                    "🦋 You're stronger than you know! Keep going! 🦋"
+                ];
+                this.wellnessTips = [
+                    "💡 Track your wellness daily to spot patterns and feel empowered!",
+                    "💡 Quality sleep helps reduce seizure triggers!",
+                    "💡 Staying hydrated supports overall brain health!",
+                    "💡 Consistent routines can help manage wellness!",
+                    "💡 Celebrate small wins - every tracked day matters!",
+                    "💡 Your mood and health are connected - tracking helps!"
+                ];
+                this.achievements = this.data.achievements || {
+                    'first-log': false,
+                    'week-streak': false,
+                    'month-streak': false,
+                    'mood-master': false,
+                    'sleep-champion': false,
+                    'week-seizure-free': false,
+                    'month-seizure-free': false,
+                    'super-tracker': false
+                };
                 this.init();
             }
 
@@ -634,6 +1072,11 @@
                 this.setupSettings();
                 this.updateHomeView();
                 this.loadTodayChecklist();
+                this.showRandomQuote();
+                this.showRandomTip();
+                this.updateWeekMoodTracker();
+                this.updateStickers();
+                this.addMouseTrail();
             }
 
             setupNavigation() {
@@ -718,8 +1161,19 @@
                         activities: document.getElementById('activities').value
                     };
                     this.saveData();
-                    alert('Daily log saved!');
+                    
+                    // Celebration effects!
+                    this.triggerConfetti();
+                    this.showAchievement('💖', 'Logged!', 'Great job tracking your wellness!');
+                    
+                    // Check for achievements
+                    this.checkAchievements();
+                    
                     this.loadTodayChecklist();
+                    this.checkStreak();
+                    this.updateWeekMoodTracker();
+                    this.updateStickers();
+                    this.calculateWellnessScore();
                 });
             }
 
@@ -760,8 +1214,10 @@
                         new Date(s.timestamp).toDateString() === date.toDateString()
                     );
                     const hasLog = this.data.dailyLogs[dateStr];
+                    const isToday = date.toDateString() === today.toDateString();
                     
                     let className = 'calendar-day';
+                    if (isToday) className += ' today';
                     if (date <= today) {
                         className += hasSeizure ? ' has-seizure' : hasLog ? ' no-seizure' : ' no-data';
                     } else {
@@ -793,7 +1249,50 @@
 
                 document.getElementById('dayDetailsDate').textContent = dateStr;
                 document.getElementById('dayDetailsContent').innerHTML = html;
+                
+                // Add edit button if there's data
+                const editBtn = log ? `<button class="btn btn-primary" style="margin-top: 12px;" onclick="tracker.editDayLog('${dateStr}')">✏️ Edit This Day</button>` : '';
+                document.getElementById('dayDetailsContent').innerHTML += editBtn;
+                
                 document.getElementById('dayDetails').style.display = 'block';
+            }
+
+            editDayLog(dateStr) {
+                const log = this.data.dailyLogs[dateStr];
+                if (!log) return;
+                
+                // Switch to daily view
+                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+                document.getElementById('dailyView').classList.add('active');
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.querySelector('.nav-item[data-view="dailyView"]').classList.add('active');
+                
+                // Close day details
+                this.closeDayDetails();
+                
+                // Populate form with existing data
+                setTimeout(() => {
+                    if (log.sleepQuality) {
+                        document.getElementById('sleepQuality').value = log.sleepQuality;
+                        document.getElementById('sleepValue').textContent = log.sleepQuality;
+                    }
+                    if (log.sleepHours) document.getElementById('sleepHours').value = log.sleepHours;
+                    if (log.medications) document.getElementById('medications').value = log.medications;
+                    if (log.foods) document.getElementById('foods').value = log.foods;
+                    if (log.activities) document.getElementById('activities').value = log.activities;
+                    
+                    // Check mood checkboxes
+                    document.querySelectorAll('.mood-checkbox').forEach(item => {
+                        item.classList.remove('checked');
+                        if (log.moods?.includes(item.dataset.mood)) {
+                            item.classList.add('checked');
+                        }
+                    });
+                    
+                    // Show notification
+                    alert(`Editing entry for ${dateStr}. Make your changes and save.`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
             }
 
             closeDayDetails() {
@@ -934,7 +1433,226 @@
                     );
                     const daysSince = Math.floor((now - new Date(sorted[0].timestamp)) / (1000 * 60 * 60 * 24));
                     document.getElementById('daysSinceLast').textContent = daysSince;
+                    
+                    // Celebrate milestones
+                    if (daysSince === 7) {
+                        this.showAchievement('🌟', 'One Week!', '7 days seizure-free! You\'re amazing!');
+                    } else if (daysSince === 30) {
+                        this.showAchievement('🎊', 'One Month!', '30 days seizure-free! Incredible!');
+                    }
                 }
+                
+                this.checkStreak();
+            }
+
+            checkStreak() {
+                const logs = Object.keys(this.data.dailyLogs).sort((a, b) => new Date(b) - new Date(a));
+                let streak = 0;
+                const today = new Date();
+                
+                for (let i = 0; i < 30; i++) {
+                    const checkDate = new Date(today);
+                    checkDate.setDate(checkDate.getDate() - i);
+                    const dateStr = checkDate.toLocaleDateString();
+                    
+                    if (this.data.dailyLogs[dateStr]) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (streak >= 3) {
+                    document.getElementById('streakBadge').style.display = 'flex';
+                    document.getElementById('streakText').textContent = `${streak} Day Tracking Streak! 🔥`;
+                } else {
+                    document.getElementById('streakBadge').style.display = 'none';
+                }
+            }
+
+            showAchievement(icon, title, message) {
+                const popup = document.getElementById('achievementPopup');
+                document.getElementById('achievementIcon').textContent = icon;
+                document.getElementById('achievementTitle').textContent = title;
+                document.getElementById('achievementMessage').textContent = message;
+                
+                popup.classList.add('show');
+                
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                }, 3000);
+            }
+
+            triggerConfetti() {
+                const container = document.getElementById('confettiContainer');
+                const colors = ['#C084FC', '#F472B6', '#FDE047', '#A7F3D0', '#FBBF24'];
+                
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * window.innerWidth + 'px';
+                        confetti.style.top = '-10px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.animation = `confetti-fall ${2 + Math.random() * 2}s linear forwards`;
+                        container.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 4000);
+                    }, i * 50);
+                }
+            }
+
+            showRandomQuote() {
+                const quote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
+                const quoteEl = document.getElementById('motivationalQuote');
+                quoteEl.textContent = quote;
+                quoteEl.style.display = 'block';
+            }
+
+            showRandomTip() {
+                const tip = this.wellnessTips[Math.floor(Math.random() * this.wellnessTips.length)];
+                document.getElementById('dailyTip').textContent = tip;
+            }
+
+            checkAchievements() {
+                const logs = Object.keys(this.data.dailyLogs);
+                let updated = false;
+
+                // First log
+                if (!this.achievements['first-log'] && logs.length >= 1) {
+                    this.achievements['first-log'] = true;
+                    this.showAchievement('🌸', 'First Entry!', 'You started your wellness journey!');
+                    updated = true;
+                }
+
+                // Week streak
+                if (!this.achievements['week-streak'] && this.getStreak() >= 7) {
+                    this.achievements['week-streak'] = true;
+                    this.showAchievement('🔥', '7 Day Streak!', 'You tracked a whole week!');
+                    updated = true;
+                }
+
+                // Month streak
+                if (!this.achievements['month-streak'] && this.getStreak() >= 30) {
+                    this.achievements['month-streak'] = true;
+                    this.showAchievement('💎', '30 Day Streak!', 'You are a tracking champion!');
+                    updated = true;
+                }
+
+                // Super tracker - 50 logs
+                if (!this.achievements['super-tracker'] && logs.length >= 50) {
+                    this.achievements['super-tracker'] = true;
+                    this.showAchievement('🦋', 'Super Tracker!', '50 entries! You\'re amazing!');
+                    updated = true;
+                }
+
+                if (updated) {
+                    this.data.achievements = this.achievements;
+                    this.saveData();
+                    this.updateStickers();
+                }
+            }
+
+            getStreak() {
+                const logs = Object.keys(this.data.dailyLogs).sort((a, b) => new Date(b) - new Date(a));
+                let streak = 0;
+                const today = new Date();
+                
+                for (let i = 0; i < 365; i++) {
+                    const checkDate = new Date(today);
+                    checkDate.setDate(checkDate.getDate() - i);
+                    const dateStr = checkDate.toLocaleDateString();
+                    
+                    if (this.data.dailyLogs[dateStr]) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                return streak;
+            }
+
+            updateStickers() {
+                Object.keys(this.achievements).forEach(key => {
+                    const sticker = document.querySelector(`[data-achievement="${key}"]`);
+                    if (sticker && this.achievements[key]) {
+                        sticker.classList.add('earned');
+                    }
+                });
+            }
+
+            updateWeekMoodTracker() {
+                const container = document.getElementById('weekMoodTracker');
+                const today = new Date();
+                let html = '';
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toLocaleDateString();
+                    const log = this.data.dailyLogs[dateStr];
+                    
+                    let moodClass = '';
+                    if (log && log.moods) {
+                        if (log.moods.includes('Happy') || log.moods.includes('Energetic')) moodClass = 'happy';
+                        else if (log.moods.includes('Calm')) moodClass = 'calm';
+                        else if (log.moods.includes('Sad') || log.moods.includes('Depression')) moodClass = 'sad';
+                        else if (log.moods.includes('Stressed') || log.moods.includes('Anxious')) moodClass = 'stressed';
+                    }
+                    
+                    html += `<div class="mood-day ${moodClass}" title="${dateStr}"></div>`;
+                }
+                
+                container.innerHTML = html;
+            }
+
+            calculateWellnessScore() {
+                const logs = Object.values(this.data.dailyLogs);
+                if (logs.length === 0) {
+                    document.getElementById('wellnessScore').textContent = '—';
+                    return;
+                }
+
+                // Score based on recent activity
+                const recent = logs.slice(-7); // Last 7 days
+                let score = 0;
+                
+                recent.forEach(log => {
+                    if (log.sleepHours) score += 15;
+                    if (log.moods && log.moods.length) score += 15;
+                    if (log.medications) score += 10;
+                    if (log.foods) score += 5;
+                    if (log.activities) score += 5;
+                });
+                
+                const finalScore = Math.min(100, Math.round(score));
+                document.getElementById('wellnessScore').textContent = finalScore;
+                
+                if (finalScore === 100) {
+                    document.querySelector('.wellness-score').classList.add('celebration-mode');
+                }
+            }
+
+            addMouseTrail() {
+                let lastEmoji = 0;
+                document.addEventListener('mousemove', (e) => {
+                    const now = Date.now();
+                    if (now - lastEmoji < 100) return; // Throttle
+                    lastEmoji = now;
+                    
+                    if (Math.random() > 0.7) { // 30% chance
+                        const emojis = ['✨', '💫', '⭐', '💖', '🌸'];
+                        const emoji = document.createElement('div');
+                        emoji.className = 'emoji-trail';
+                        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        emoji.style.left = e.pageX + 'px';
+                        emoji.style.top = e.pageY + 'px';
+                        document.getElementById('emojiTrail').appendChild(emoji);
+                        
+                        setTimeout(() => emoji.remove(), 1000);
+                    }
+                });
             }
 
             updateHistoryView() {
@@ -990,9 +1708,14 @@
                 ).map(date => {
                     const day = grouped[date];
                     let html = '<div class="history-item">';
-                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">`;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">`;
                     html += `<strong style="font-size: 18px;">${date}</strong>`;
+                    html += `<div style="display: flex; gap: 8px;">`;
+                    if (day.dailyLog) {
+                        html += `<button onclick="tracker.editDayLog('${date}')" style="background: linear-gradient(135deg, #C084FC 0%, #F472B6 100%); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;">✏️ Edit</button>`;
+                    }
                     html += `<button onclick="tracker.deleteDay('${date}')" style="background: #FEE; color: #DC2626; border: 2px solid #FCA5A5; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;">🗑️ Delete</button>`;
+                    html += `</div>`;
                     html += `</div>`;
                     
                     // Show seizures
