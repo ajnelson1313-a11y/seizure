@@ -251,25 +251,40 @@
             margin-bottom: 16px;
         }
         .tag-item {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            gap: 12px;
             background: var(--gradient-soft);
             border: 2px solid var(--border);
-            padding: 10px 16px;
+            padding: 14px 16px;
             border-radius: 12px;
-            margin: 4px;
+            margin-bottom: 10px;
             font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .tag-content {
+            flex: 1;
+            word-break: break-word;
         }
         .tag-remove {
-            background: none;
+            background: var(--secondary);
             border: none;
-            color: var(--secondary);
-            font-size: 18px;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
             font-weight: 700;
-            padding: 0;
+            padding: 4px 12px;
             line-height: 1;
+            border-radius: 8px;
+            flex-shrink: 0;
+            min-width: 36px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .squirrel-mascot {
             position: fixed;
@@ -497,10 +512,10 @@
 
             <div class="form-group">
                 <label class="form-label">Medications Taken Today</label>
-                <div id="medicationsList" style="margin-bottom: 12px;"></div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="medicationInput" class="form-input" placeholder="Enter medication..." style="margin-bottom: 0;">
-                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 24px; white-space: nowrap;" onclick="tracker.addMedication()">+ Add</button>
+                <div id="medicationsList"></div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <input type="text" id="medicationInput" class="form-input" placeholder="Enter medication..." style="margin-bottom: 0; flex: 1;">
+                    <button type="button" class="btn" style="background: var(--gradient-secondary); color: white; padding: 18px 20px; white-space: nowrap; flex-shrink: 0;" onclick="tracker.addMedication()">+ Add</button>
                 </div>
             </div>
 
