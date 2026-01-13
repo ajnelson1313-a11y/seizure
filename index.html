@@ -501,21 +501,37 @@
                 document.getElementById('emergencyBtn').addEventListener('click', () => {
                     const now = new Date();
                     const timestamp = now.toISOString();
+                    const dateStr = now.toLocaleDateString();
                     
                     // Immediately save the seizure
                     this.data.seizures.push({
                         timestamp,
-                        date: now.toLocaleDateString(),
+                        date: dateStr,
                         time: now.toLocaleTimeString(),
                         type: '',
                         duration: '',
                         notes: '',
                         hasDetails: false
                     });
+                    
+                    // Also create/update daily log to mark that a seizure occurred
+                    if (!this.data.dailyLogs[dateStr]) {
+                        this.data.dailyLogs[dateStr] = {
+                            date: dateStr,
+                            sleepQuality: '',
+                            sleepHours: '',
+                            moods: [],
+                            medications: '',
+                            foods: '',
+                            activities: ''
+                        };
+                    }
+                    
                     this.saveData();
                     this.updateHomeView();
                     this.updateHistoryView();
                     this.renderCalendar();
+                    this.loadTodayChecklist();
                     
                     // Show confirmation with option to add details
                     const modal = document.getElementById('quickLogModal');
@@ -523,7 +539,7 @@
                         <div style="text-align: center;">
                             <div style="font-size: 80px; margin-bottom: 16px;">✓</div>
                             <h2 style="margin-bottom: 12px; color: #22C55E;">Seizure Logged</h2>
-                            <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${now.toLocaleDateString()}</p>
+                            <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${dateStr}</p>
                             <p style="font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 24px;">${now.toLocaleTimeString()}</p>
                             <p style="color: #666; margin-bottom: 24px; font-size: 14px;">Closing in <span id="countdown">5</span> seconds...</p>
                             <div style="display: flex; gap: 12px;">
